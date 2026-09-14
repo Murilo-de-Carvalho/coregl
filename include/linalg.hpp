@@ -14,11 +14,40 @@ public:
         this->y = y;
     }
 
-    ~Vec2() {
-    }
+    ~Vec2() {}
 
     float norm() {
-        return sqrtf( (this->x * this->x) + (this->y * this->y) );
+        return sqrtf( (x * x) + (y * y) );
+    }
+
+    Vec2 operator+(const Vec2& other) {
+        return Vec2(x + other.x, y + other.y);
+    }
+
+    Vec2 operator-(const Vec2& other) {
+        return Vec2(x - other.x, y - other.y);
+    }
+
+    Vec2 operator*(float constant) {
+        return Vec2(x * constant, y * constant);
+    }
+
+    Vec2& operator+=(const Vec2& other) {
+        this->x += other.x;
+        this->y += other.y;
+        return *this;
+    }
+
+    Vec2& operator-=(const Vec2& other) {
+        this->x -= other.x;
+        this->y -= other.y;
+        return *this;
+    }
+
+    Vec2& operator*=(float constant) {
+        this->x *= constant;
+        this->y *= constant;
+        return *this;
     }
 
 };
@@ -34,19 +63,50 @@ public:
     float z;
 
     Vec3(float x, float y, float z) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
+        this->x = x;
+        this->y = y;
+        this->z = z;
     }
 
-    ~Vec3() {
-    }
+    ~Vec3() {}
 
     float norm() {
-        return sqrtf( (this->x * this->x) + (this->y * this->y) + (this->z * this->z) );
+        return sqrtf( (x * x) + (y * y) + (z * z) );
+    }
+
+    Vec3 operator+(const Vec3& other) {
+        return Vec3(x + other.x, y + other.y, z + other.z);
     }
 
 };
+
+class Vec_Polar {
+
+private:
+
+    float theta;
+    float r;
+
+public:
+
+    Vec_Polar(float theta, float r) {
+        this->theta = theta;
+        this->r = r;
+    }
+
+    ~Vec_Polar() {}
+
+    Vec2 to_cartesian() {
+
+        return Vec2 (
+            r * cosf(theta),
+            r * sinf(theta)
+        );
+
+    }
+
+};
+
 
 class Vec_Sphere {
 
@@ -64,7 +124,6 @@ public:
         this->theta = theta;
     }
 
-    ~Vec_Sphere() {
-    }
+    ~Vec_Sphere() {}
 
 };

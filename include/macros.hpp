@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <math.h>
 #include <GL/glut.h>
 // #include <GL/glew.h>
@@ -16,3 +15,7 @@
 
 #define MAX(a, b) a > b ? a : b
 #define MIN(a, b) a < b ? a : b
+
+#define RADIANS(deg) deg * (PI/180.0f)
+
+#define ERROR(msg) {fprintf(stderr, "[ERROR] %s\n", msg); exit(1);}
