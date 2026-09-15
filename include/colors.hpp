@@ -23,17 +23,17 @@ public:
 
 };
 
-const Color RED     =  Color(219, 0,   0,   255);
-const Color GREEN   =  Color(0,   146, 62,  255);
-const Color BLUE    =  Color(1,   33,  105, 255);
+const Color RED     =  {219, 0,   0,   255};
+const Color GREEN   =  {0,   146, 62,  255};
+const Color BLUE    =  {1,   33,  105, 255};
 
-const Color YELLOW  =  Color(248, 193, 0,   255);
-const Color CYAN    =  Color(19,  218, 233, 255);
-const Color MAGENTA =  Color(250, 45,  208, 255);
+const Color YELLOW  =  {248, 193, 0,   255};
+const Color CYAN    =  {19,  218, 233, 255};
+const Color MAGENTA =  {250, 45,  208, 255};
 
-const Color PURPLE  =  Color(174, 55,  255, 255);
-const Color ORANGE  =  Color(255, 124, 5,   255);
-const Color GREY    =  Color(169, 169, 169, 255);
+const Color PURPLE  =  {174, 55,  255, 255};
+const Color ORANGE  =  {255, 124, 5,   255};
+const Color GREY    =  {169, 169, 169, 255};
 
 void apply_color(Color color) {
     glColor4ub(color.r, color.g, color.b, color.a);

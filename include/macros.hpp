@@ -17,5 +17,9 @@
 #define MIN(a, b) a < b ? a : b
 
 #define RADIANS(deg) deg * (PI/180.0f)
+#define DEGREES(radians) (radians * 180.0f) / PI
 
 #define ERROR(msg) {fprintf(stderr, "[ERROR] %s\n", msg); exit(1);}
+
+#define NULL_VECTOR_2D {0.0f, 0.0f}
+#define NULL_VECTOR_3D {0.0f, 0.0f, 0.0f}

@@ -1,114 +1,198 @@
-
+#include <GL/glut.h>
 #include "include/macros.hpp"
 #include "include/linalg.hpp"
 #include "include/colors.hpp"
 #include "include/shapes.hpp"
 #include "include/misc.hpp"
+#include "include/camera.hpp"
 
-Vec2 origin = Vec2(0.0f, 0.0f);
-Triangle tri = Triangle(origin, 0.8f);
-Square sqr = Square(origin, 0.8f);
+float angle, f_aspect;
 
-void draw() {
+Vec3 origin = {0.0f, 0.0f, 0.0f};
+Vec3 normal = {0.0f, -1.0f, 0.0f};
+Vec3 cam_pos = {0.0f, -2.5f, 0.0f};
+Vec3 cam_up = {0.0f, 0.0f, 1.0f};
 
+//Quad_Face faces[6];
+Quad_Face test;// = {ORIGIN_3D - Y_AXIS_3D, -Y_AXIS_3D, 1.0f};
+Camera_Orbital cam = Camera_Orbital(cam_pos, origin, cam_up);
+
+Cube cube = {origin, 0.6f};
+
+void display(void) {
+
+    // Limpa a janela e o depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    tri.draw(RED);
-    sqr.draw(BLUE);
-
-    glFlush();
-
-    return;
+        //faces[FRONT].draw(RED);
+        //test.draw(RED);
+        cube.draw();
+    glutSwapBuffers();
 }
 
-void resize_window(GLsizei w, GLsizei h) {
+void init (void) {
+ 
+    float ambient_light[4]={0.2,0.2,0.2,1.0};
+    float diffuse_light[4]={0.7,0.7,0.7,1.0};     // "Color" 
+    float specular_light[4]={1.0, 1.0, 1.0, 1.0}; // "Brightness" 
+    float light_pos[4]={0.0, 50.0, 50.0, 1.0};
+    //test = {ORIGIN_3D - Y_AXIS_3D, -Y_AXIS_3D, 1.0f};
 
-    if (!h) h = 1;
+    //faces[FRONT]  = {ORIGIN_3D - Y_AXIS_3D, -Y_AXIS_3D, 1.0f};
+    //faces[BACK]  = {ORIGIN_3D + Y_AXIS_3D, Y_AXIS_3D, 1.0f};
 
-    glViewport(0, 0, w, h);
+    //print_vec(faces[FRONT].get_pos());
+    //print_vec(faces[BACK].get_pos());
 
+    // Material's brightness capacity
+    float specularity[4]={1.0,1.0,1.0,1.0};
+    GLint material_specularity = 60;
+
+    // Set background color
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // Enable Gouraud colorizing model
+    glShadeModel(GL_SMOOTH);
+
+    // Set material's reflectance
+    glMaterialfv(GL_FRONT,GL_SPECULAR, specularity);
+
+    // Define a concentração do brilho
+    // Set brightness concentration
+    glMateriali(GL_FRONT,GL_SHININESS,material_specularity);
+
+    // Enable ambient light
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_light);
+
+    // Set LIGHT0 parameters
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light); 
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+
+    // Enable setting the material color based on the current color
+    glEnable(GL_COLOR_MATERIAL);
+
+    // Enable lighting
+    glEnable(GL_LIGHTING);
+
+    // Enable LIGHT0
+    glEnable(GL_LIGHT0);
+
+    // Enable depth-buffering
+    glEnable(GL_DEPTH_TEST);
+
+    angle=45.0f;
+}
+
+void configure_visualization(void) {
+
+    // Set the projection coordinate system
     glMatrixMode(GL_PROJECTION);
+
+    // Initialize the projection coordinate system
     glLoadIdentity();
 
-    if (w <= h)
-        gluOrtho2D(-1.0f, 1.0f, -1.0f * h/w, 1.0f * h/w);
-    else
-        gluOrtho2D(-1.0f * w/h, 1.0f * w/h, -1.0, 1.0f);
+    // Set the projection perspective
+    gluPerspective(angle, f_aspect, 0.4, 500);
 
-    return;
+    // Set the model coordinate system
+    glMatrixMode(GL_MODELVIEW);
+
+    // Initialize the model coordinate system
+    glLoadIdentity();
+
+    // Camera specs
+    Vec3 cam_pos = cam.get_pos().to_opengl_coords();
+    Vec3 cam_pos_print = cam.get_pos();
+
+    gluLookAt(
+        cam_pos.x, cam_pos.y, cam_pos.z, // Cam pos
+        0.0f, 0.0f, 0.0f, // Target
+        0.0f, 1.0f, 0.0f  // Up vector
+    );
 }
 
-void keyboard(unsigned char key, int /*x*/, int /*y*/) {
+void resize_window(int w, int h) {
+
+    // To avoid division by zero
+    if ( h == 0 ) h = 1;
+
+    // Set viewport size;
+    glViewport(0, 0, w, h);
+ 
+    // Determine aspect correction
+    f_aspect = (float) w / (float) h;
+
+    configure_visualization();
+}
+
+void mouse(int button, int state, int, int) {
+
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+        if (angle >= 10) angle -= 5; // Zoom-in
+
+
+    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+        if (angle <= 130) angle += 5; // Zoom-out
+
+    configure_visualization();
+
+    glutPostRedisplay();
+}
+
+void keyboard(unsigned char key, int, int) {
 
     switch (key) {
 
         // Esc
         case 27:
             exit(0);
-
-        case '+':
-            tri.set_size(tri.get_size() + 0.1);
-            break;
-
-        case '-':
-            tri.set_size(tri.get_size() - 0.1);
-            break;
-
-        case 'W':
-        case 'w':
-            tri.update_pos(Vec2(0, 0.1));
             break;
 
         case 'A':
         case 'a':
-            tri.update_pos(Vec2(-0.1, 0));
-            break;
-
-        case 'S':
-        case 's':
-            tri.update_pos(Vec2(0, -0.1));
+            cam.rotate_horizontal(-5.0f);
             break;
 
         case 'D':
         case 'd':
-            tri.update_pos(Vec2(0.1, 0));
+            cam.rotate_horizontal(5.0f);;
             break;
 
-        default:
+        case 'W':
+        case 'w':
+            cam.rotate_vertical(5.0f);
             break;
+
+        case 'S':
+        case 's':
+            cam.rotate_vertical(-5.0f);
+            break;
+
     }
 
+    configure_visualization();
+
     glutPostRedisplay();
-
-    return;
 }
 
-void init() {
-
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glEnable(GL_DEPTH_TEST);
-
-    return;
-}
-
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv) {
 
     glutInit(&argc, argv);
 
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-    glutInitWindowSize(800, 800);
-    glutCreateWindow("Core");
+    glutInitWindowSize(800,800);
+    glutCreateWindow("Cubo C++");
 
-    glutDisplayFunc(draw);
+    glutDisplayFunc(display);
 
     glutReshapeFunc(resize_window);
 
+    glutMouseFunc(mouse);
     glutKeyboardFunc(keyboard);
 
     init();
 
     glutMainLoop();
-
-    return 0;
 }

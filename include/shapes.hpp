@@ -33,15 +33,15 @@ class Triangle {
 
 private:
 
-    Vec2 pos {0.0f, 0.0f};
+    Vec2 pos = NULL_VECTOR_2D;
     float size; // Distance between vertices and pos
 
     float dx_v1_v2;
     float dy_v1_v2;
 
-    //Vec2 v1 {0.0f, 0.0f}; // Bottom left vertex
-    //Vec2 v2 {0.0f, 0.0f}; // Top middle vertex
-    //Vec2 v3 {0.0f, 0.0f}; // Bottom right vertex
+    //Vec2 v1 = NULL_VECTOR_2D; // Bottom left vertex
+    //Vec2 v2 = NULL_VECTOR_2D; // Top middle vertex
+    //Vec2 v3 = NULL_VECTOR_2D; // Bottom right vertex
 
     void calculate_vertices() {
 
@@ -69,12 +69,12 @@ public:
 
     ~Triangle() {}
 
-    void update_pos(const Vec2& delta_pos) {
+    void translate_by(const Vec2& delta_pos) {
         pos += delta_pos;
         calculate_vertices();
     }
 
-    void update_size(float delta_size) {
+    void increase_size(float delta_size) {
 
         if (size + delta_size < 0.0f)
             ERROR("delta_size must be greater or equal to -size")
@@ -126,12 +126,12 @@ class Square {
 
 private:
 
-    Vec2 pos{0.0f, 0.0f};
+    Vec2 pos = NULL_VECTOR_2D;
     float size;
 
 public:
 
-    Square(Vec2& pos, float size) {
+    Square(const Vec2& pos, float size) {
 
         if (size < 0.0f)
             ERROR("size must be non-negative")
@@ -143,11 +143,11 @@ public:
 
     ~Square() {}
 
-    void update_pos(const Vec2& delta_pos) {
+    void translate_by(const Vec2& delta_pos) {
         pos += delta_pos;
     }
 
-    void update_size(float delta_size) {
+    void increase_size(float delta_size) {
 
         if (size + delta_size < 0.0f)
             ERROR("delta_size must be greater or equal to -size")
@@ -201,13 +201,13 @@ class Rectangle {
 
 private:
 
-    Vec2 pos {0.0f, 0.0f};
+    Vec2 pos = NULL_VECTOR_2D;
     float size_x;
     float size_y;
 
 public:
 
-    Rectangle(Vec2& pos, float size_x, float size_y) {
+    Rectangle(const Vec2& pos, float size_x, float size_y) {
 
         if (size_x < 0.0f || size_y < 0.0f)
             ERROR("sizes must be non-negative")
@@ -220,11 +220,11 @@ public:
 
     ~Rectangle() {}
 
-    void update_pos(const Vec2& delta_pos) {
+    void translate_by(const Vec2& delta_pos) {
         pos += delta_pos;
     }
 
-    void update_sizes(float delta_size_x, float delta_size_y) {
+    void increase_sizes(float delta_size_x, float delta_size_y) {
 
         if (delta_size_x < 0.0f || delta_size_y < 0.0f)
             ERROR("delta sizes must be greater or equal to -sizes, respectively")
@@ -289,12 +289,12 @@ class Circle {
 
 private:
 
-    Vec2 pos {0.0f, 0.0f};
+    Vec2 pos = NULL_VECTOR_2D;
     float radius;
 
 public:
 
-    Circle(Vec2 pos, float radius) {
+    Circle(const Vec2& pos, float radius) {
 
         if (radius < 0.0f)
             ERROR("radius must be non-negative")
@@ -306,11 +306,11 @@ public:
 
     ~Circle() {}
 
-    void update_pos(const Vec2& delta_pos) {
+    void translate_by(const Vec2& delta_pos) {
         pos += delta_pos;
     }
 
-    void update_radius(float delta_radius) {
+    void increase_radius(float delta_radius) {
 
         if (radius + delta_radius < 0.0f)
             ERROR("delta_radius must be greater or equal to -radius")
@@ -369,13 +369,13 @@ class Elipsis {
 
 private:
 
-    Vec2 pos {0.0f, 0.0f};
+    Vec2 pos = NULL_VECTOR_2D;
     float radius_x;
     float radius_y;
 
 public:
 
-    Elipsis(Vec2 pos, float radius_x, float radius_y) {
+    Elipsis(const Vec2& pos, float radius_x, float radius_y) {
 
         if (radius_x < 0.0f || radius_y < 0.0f)
             ERROR("radii must be non-negative")
@@ -388,11 +388,11 @@ public:
 
     ~Elipsis() {}
 
-    void update_pos(const Vec2& delta_pos) {
+    void translate_by(const Vec2& delta_pos) {
         pos += delta_pos;
     }
 
-    void update_radii(float delta_radius_x, float delta_radius_y) {
+    void increase_radii(float delta_radius_x, float delta_radius_y) {
 
         if (delta_radius_x < 0.0f || delta_radius_y < 0.0f)
             ERROR("delta radii must be greater or equal to -radii, respectively")
@@ -485,7 +485,7 @@ public:
 
     }
 
-    void update_vertices(const std::vector<Vec2>& delta_vertices) {
+    void translate_vertices_by(const std::vector<Vec2>& delta_vertices) {
 
         if (delta_vertices.size() != vertices.size())
             ERROR("vector dimensions doesn't match")
@@ -495,7 +495,7 @@ public:
 
     }
 
-    void update_vertex(uint8_t vertex_index, const Vec2& delta_vertex) {
+    void translate_vertex_by(uint8_t vertex_index, const Vec2& delta_vertex) {
         vertices.at(vertex_index) += delta_vertex;
     }
 
@@ -546,32 +546,137 @@ class Quad_Face {
 
 private:
 
-    Vec3 normal {0.0f, 0.0f, 0.0f};
-    Vec3 pos {0.0f, 0.0f, 0.0f};
+    Vec3 pos = NULL_VECTOR_3D;
+    Vec3 normal = NULL_VECTOR_3D;
     float size;
 
 public:
 
-    Quad_Face() {
+    Quad_Face(const Vec3& pos, const Vec3& normal, float size) {
 
+        if (size < 0.0f)
+            ERROR("size must be non-negative")
+
+        this->pos = pos;
+        //print_vec(pos);
+        //print_vec(this->pos);
+        //print_vec(normal);
+        this->normal = normal.normalize();
+        this->size = size;
+
+    }
+
+    // Returns a 1x1 face, centered at the origin and facing -Y
+    Quad_Face() {
+        this->pos = ORIGIN_3D;
+        this->normal = -Y_AXIS_3D;
+        this->size = 1.0f;
     }
 
     ~Quad_Face() {}
 
+    Vec3 get_pos() const {
+        return pos;
+    }
+
+    void draw(Color color) {
+
+        // Relative size
+        float r_size = size/2.0f;
+
+        Vec3 initial_normal = Vec3(0.0f, -1.0f, 0.0f); // -Y-AXIS
+        Vec3 rotation_vector = NULL_VECTOR_3D;
+        float angle;
+
+        bool are_normals_equal = (normal == initial_normal);
+        bool are_normals_parallel = (normal == -initial_normal);
+
+        // If facing Y-AXIS, just rotate the face by 180°
+        if (are_normals_parallel) {
+            rotation_vector = {0.0f, 1.0f, 0.0f}; // {0.0f, 0.0f, 1.0f} but in opengl coordinates
+            angle = RADIANS(180.0f);
+        }
+
+        else if (!are_normals_equal) {
+            rotation_vector = cross(initial_normal, normal).normalize().to_opengl_coords();
+            angle = acosf(dot(initial_normal, normal));
+        }
+
+        Vec3 translated_pos = pos.to_opengl_coords();
+        Vec3 translated_initial_normal = initial_normal.to_opengl_coords();
+
+        apply_color(color);
+
+        // Initialize the points at the origin, rotate if needed and then translate to pos
+        glPushMatrix();
+
+            glTranslatef(translated_pos.x, translated_pos.y, translated_pos.z);
+
+            if (!are_normals_equal){
+                glRotatef(DEGREES(angle), rotation_vector.x, rotation_vector.y, rotation_vector.z);
+            }
+
+            glBegin(GL_QUADS);
+
+                // Normal gets rotated with glrotate, that's why this is the initial normal
+                glNormal3f(translated_initial_normal.x, translated_initial_normal.y, translated_initial_normal.z);
+                glVertex3f(0 - r_size, 0 - r_size, 0); // Bottom left
+                glVertex3f(0 - r_size, 0 + r_size, 0); // Top left
+                glVertex3f(0 + r_size, 0 + r_size, 0); // Top right
+                glVertex3f(0 + r_size, 0 - r_size, 0); // Bottom right
+
+            glEnd();
+    
+        glPopMatrix();
+
+        reset_color();
+
+    }
+
+};
+
+enum cube_faces {
+    FRONT = 0,
+    BACK,
+    RIGHT,
+    LEFT,
+    UP,
+    DOWN
 };
 
 class Cube {
 
 private:
 
-    Vec2 pos {0.0f, 0.0f};
+    Vec3 pos = NULL_VECTOR_3D;
+    Quad_Face faces[6];
+    float volume;
 
 public:
 
-    Cube(/* args */) {
+    Cube(Vec3 pos, float volume) {
+
+        float relative_volume = volume/2.0f;
+
+        // Faces translate by half the volume in each direction
+        // Quad_Face already handles the size, so it can be passed as it is
+        this->faces[FRONT]  = {pos - Y_AXIS_3D * relative_volume, -Y_AXIS_3D, volume};
+        this->faces[BACK]   = {pos + Y_AXIS_3D * relative_volume,  Y_AXIS_3D, volume};
+        this->faces[RIGHT]  = {pos + X_AXIS_3D * relative_volume,  X_AXIS_3D, volume};
+        this->faces[LEFT]   = {pos - X_AXIS_3D * relative_volume, -X_AXIS_3D, volume};
+        this->faces[UP]     = {pos + Z_AXIS_3D * relative_volume,  Z_AXIS_3D, volume};
+        this->faces[DOWN]   = {pos - Z_AXIS_3D * relative_volume, -Z_AXIS_3D, volume};
 
     }
 
     ~Cube() {}
+
+    void draw() {
+
+        for (uint8_t i = 0; i < 6; i++) {
+            faces[i].draw(RED);
+        }
+
+    }
 
 };
