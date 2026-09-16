@@ -13,9 +13,10 @@ public:
 
     Camera_Orbital(const Vec3& pos, const Vec3& target, const Vec3& up) {
 
+        // TODO: Fix this
         float rho = pos.length();
         if (rho < 0.01f)
-            ERROR("length of pos has to be bigger than 0.01f")
+            ERROR("Length of pos has to be bigger than 0.01f")
 
         this->pos = {
             rho,
@@ -63,6 +64,10 @@ public:
 
     Vec3 get_pos() const {
         return pos.to_cartesian();
+    }
+
+    Vec3 get_target() const {
+        return target;
     }
 
     float get_distance() const {

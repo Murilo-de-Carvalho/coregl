@@ -79,6 +79,8 @@ public:
 
 };
 
+class Vec_Sphere;
+
 class Vec3 {
 
 private:
@@ -104,6 +106,22 @@ public:
         this->z = 0.0f;
     }
 
+    Vec3(float x, float y, float z, bool use_opengl_coords) {
+
+        if (use_opengl_coords) {
+            this->x = x;
+            this->y = -z;
+            this->z = y;
+        }
+
+        else {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+        }
+
+    }
+
     ~Vec3() {}
 
     float length() const {
@@ -116,17 +134,10 @@ public:
         return NULL_VECTOR_3D;
     }
 
-    Vec3 to_spherical() const {
-        float rho = length();
-        return {
-            rho,
-            atan2f(y, x),
-            acosf(z/rho)
-        };
-    }
+    Vec_Sphere to_spherical() const;
 
     // X is right, Y is up and Z is Backwards (facing YOU)
-    Vec3 to_opengl_coords() {
+    Vec3 to_opengl_coords() const {
         return {
             x,
             z,
@@ -182,6 +193,10 @@ public:
 
     bool operator==(const Vec3& other) {
         return ( (x == other.x) && (y == other.y) && (z == other.z) );
+    }
+
+    bool operator!=(const Vec3& other) {
+        return ( (x != other.x) || (y != other.y) || (z != other.z) );
     }
 
     // Unary sign for negative
@@ -317,6 +332,15 @@ public:
     }
 
 };
+
+Vec_Sphere Vec3::to_spherical() const {
+    float rho = length();
+    return {
+        rho,
+        DEGREES(atan2f(y, x)),
+        DEGREES(acosf(z/rho))
+    };
+}
 
 Vec3 cross(const Vec3& a, const Vec3& b) {
     return {
