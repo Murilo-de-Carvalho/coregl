@@ -19,12 +19,12 @@ struct Vec3 {
     Vec3(float x, float y, float z);
     ~Vec3();
 
-    float length();
+    float length() const;
     Vec3 normalize();
 
-    Vec3gl to_vec3gl();
-    Vec3_Sphere to_vec3_sphere();
-    Vec3gl_Sphere to_vec3gl_sphere();
+    Vec3gl to_vec3gl() const;
+    Vec3_Sphere to_vec3_sphere() const;
+    Vec3gl_Sphere to_vec3gl_sphere() const;
 
     Vec3 operator+(const Vec3& other) const;
     Vec3 operator-(const Vec3& other) const;
@@ -32,13 +32,13 @@ struct Vec3 {
     Vec3 operator/(float constant) const;
     Vec3 operator-() const; // Unitary negative
 
-    Vec3& operator+=(const Vec3& other) const;
-    Vec3& operator-=(const Vec3& other) const;
-    Vec3& operator*=(float constant) const;
-    Vec3& operator/=(float constant) const;
+    Vec3& operator+=(const Vec3& other);
+    Vec3& operator-=(const Vec3& other);
+    Vec3& operator*=(float constant);
+    Vec3& operator/=(float constant);
 
-    bool operator==(const Vec3& other);
-    bool operator!=(const Vec3& other);
+    bool operator==(const Vec3& other) const;
+    bool operator!=(const Vec3& other) const;
 
 };
 
@@ -52,12 +52,12 @@ struct Vec3gl {
     Vec3gl(float x, float y, float z);
     ~Vec3gl();
 
-    float length();
+    float length() const;
     Vec3gl normalize();
 
-    Vec3 to_vec3();
-    Vec3_Sphere to_vec3_sphere();
-    Vec3gl_Sphere to_vec3gl_sphere();
+    Vec3 to_vec3() const;
+    Vec3_Sphere to_vec3_sphere() const;
+    Vec3gl_Sphere to_vec3gl_sphere() const;
 
     Vec3gl operator+(const Vec3gl& other) const;
     Vec3gl operator-(const Vec3gl& other) const;
@@ -65,13 +65,13 @@ struct Vec3gl {
     Vec3gl operator/(float constant) const;
     Vec3gl operator-() const; // Unitary negative
 
-    Vec3gl& operator+=(const Vec3gl& other) const;
-    Vec3gl& operator-=(const Vec3gl& other) const;
-    Vec3gl& operator*=(float constant) const;
-    Vec3gl& operator/=(float constant) const;
+    Vec3gl& operator+=(const Vec3gl& other);
+    Vec3gl& operator-=(const Vec3gl& other);
+    Vec3gl& operator*=(float constant);
+    Vec3gl& operator/=(float constant);
 
-    bool operator==(const Vec3gl& other);
-    bool operator!=(const Vec3gl& other);
+    bool operator==(const Vec3gl& other) const;
+    bool operator!=(const Vec3gl& other) const;
 
 };
 
@@ -85,12 +85,12 @@ struct Vec3_Sphere {
     Vec3_Sphere(float rho, float theta, float phi);
     ~Vec3_Sphere();
 
-    float length();
+    float length() const;
     Vec3_Sphere normalize();
 
-    Vec3 to_vec3();
-    Vec3gl to_vec3gl();
-    Vec3gl_Sphere to_vec3gl_sphere();
+    Vec3 to_vec3() const;
+    Vec3gl to_vec3gl() const;
+    Vec3gl_Sphere to_vec3gl_sphere() const;
 
     Vec3_Sphere operator+(const Vec3_Sphere& other) const;
     Vec3_Sphere operator-(const Vec3_Sphere& other) const;
@@ -98,13 +98,13 @@ struct Vec3_Sphere {
     Vec3_Sphere operator/(float constant) const;
     Vec3_Sphere operator-() const; // Unitary negative
 
-    Vec3_Sphere& operator+=(const Vec3_Sphere& other) const;
-    Vec3_Sphere& operator-=(const Vec3_Sphere& other) const;
-    Vec3_Sphere& operator*=(float constant) const;
-    Vec3_Sphere& operator/=(float constant) const;
+    Vec3_Sphere& operator+=(const Vec3_Sphere& other);
+    Vec3_Sphere& operator-=(const Vec3_Sphere& other);
+    Vec3_Sphere& operator*=(float constant);
+    Vec3_Sphere& operator/=(float constant);
 
-    bool operator==(const Vec3_Sphere& other);
-    bool operator!=(const Vec3_Sphere& other);
+    bool operator==(const Vec3_Sphere& other) const;
+    bool operator!=(const Vec3_Sphere& other) const;
 
 };
 
@@ -118,12 +118,12 @@ struct Vec3gl_Sphere {
     Vec3gl_Sphere(float rho, float theta, float phi);
     ~Vec3gl_Sphere();
 
-    float length();
+    float length() const;
     Vec3gl_Sphere normalize();
 
-    Vec3 to_vec3();
-    Vec3gl to_vec3gl();
-    Vec3_Sphere to_vec3_sphere();
+    Vec3 to_vec3() const;
+    Vec3gl to_vec3gl() const;
+    Vec3_Sphere to_vec3_sphere() const;
 
     Vec3gl_Sphere operator+(const Vec3gl_Sphere& other) const;
     Vec3gl_Sphere operator-(const Vec3gl_Sphere& other) const;
@@ -131,13 +131,13 @@ struct Vec3gl_Sphere {
     Vec3gl_Sphere operator/(float constant) const;
     Vec3gl_Sphere operator-() const; // Unitary negative
 
-    Vec3gl_Sphere& operator+=(const Vec3gl_Sphere& other) const;
-    Vec3gl_Sphere& operator-=(const Vec3gl_Sphere& other) const;
-    Vec3gl_Sphere& operator*=(float constant) const;
-    Vec3gl_Sphere& operator/=(float constant) const;
+    Vec3gl_Sphere& operator+=(const Vec3gl_Sphere& other);
+    Vec3gl_Sphere& operator-=(const Vec3gl_Sphere& other);
+    Vec3gl_Sphere& operator*=(float constant);
+    Vec3gl_Sphere& operator/=(float constant);
 
-    bool operator==(const Vec3gl_Sphere& other);
-    bool operator!=(const Vec3gl_Sphere& other);
+    bool operator==(const Vec3gl_Sphere& other) const;
+    bool operator!=(const Vec3gl_Sphere& other) const;
 
 };
 
@@ -170,13 +170,13 @@ public:
     void transpose();
     void invert();
     float determinant();
-    Matrix3 get_transpose();
-    Matrix3 get_inverse();
+    Matrix3 get_transpose() const;
+    Matrix3 get_inverse() const;
 
-    std::array<Vec3, 3> to_vec3_array();
-    std::array<Vec3gl, 3> to_vec3gl_array();
-    std::array<Vec3_Sphere, 3> to_vec3_sphere_array();
-    std::array<Vec3gl_Sphere, 3> to_vec3gl_sphere_array();
+    std::array<Vec3, 3> to_vec3_array() const;
+    std::array<Vec3gl, 3> to_vec3gl_array() const;
+    std::array<Vec3_Sphere, 3> to_vec3_sphere_array() const;
+    std::array<Vec3gl_Sphere, 3> to_vec3gl_sphere_array() const;
 
     std::array<float, 3>& operator[](int index);
 
@@ -186,13 +186,13 @@ public:
     Matrix3 operator/(float constant) const;
     Matrix3 operator-() const; // Unitary negative
 
-    Matrix3& operator+=(const Matrix3& other) const;
-    Matrix3& operator-=(const Matrix3& other) const;
-    Matrix3& operator*=(float constant) const;
-    Matrix3& operator/=(float constant) const;
+    Matrix3& operator+=(const Matrix3& other);
+    Matrix3& operator-=(const Matrix3& other);
+    Matrix3& operator*=(float constant);
+    Matrix3& operator/=(float constant);
 
-    bool operator==(const Matrix3& other);
-    bool operator!=(const Matrix3& other);
+    bool operator==(const Matrix3& other) const;
+    bool operator!=(const Matrix3& other) const;
 
 };
 
@@ -223,13 +223,13 @@ public:
     void transpose();
     void invert();
     float determinant();
-    Matrix4 get_transpose();
-    Matrix4 get_inverse();
+    Matrix4 get_transpose() const;
+    Matrix4 get_inverse() const;
 
-    std::array<Vec3, 4> to_vec3_array();
-    std::array<Vec3gl, 4> to_vec3gl_array();
-    std::array<Vec3_Sphere, 4> to_vec3_sphere_array();
-    std::array<Vec3gl_Sphere, 4> to_vec3gl_sphere_array();
+    std::array<Vec3, 4> to_vec3_array() const;
+    std::array<Vec3gl, 4> to_vec3gl_array() const;
+    std::array<Vec3_Sphere, 4> to_vec3_sphere_array() const;
+    std::array<Vec3gl_Sphere, 4> to_vec3gl_sphere_array() const;
 
     std::array<float, 4>& operator[](int index);
 
@@ -239,13 +239,13 @@ public:
     Matrix4 operator/(float constant) const;
     Matrix4 operator-() const; // Unitary negative
 
-    Matrix4& operator+=(const Matrix4& other) const;
-    Matrix4& operator-=(const Matrix4& other) const;
-    Matrix4& operator*=(float constant) const;
-    Matrix4& operator/=(float constant) const;
+    Matrix4& operator+=(const Matrix4& other);
+    Matrix4& operator-=(const Matrix4& other);
+    Matrix4& operator*=(float constant);
+    Matrix4& operator/=(float constant);
 
-    bool operator==(const Matrix4& other);
-    bool operator!=(const Matrix4& other);
+    bool operator==(const Matrix4& other) const;
+    bool operator!=(const Matrix4& other) const;
 
 };
 
@@ -253,6 +253,9 @@ void print_vec(Vec3 vec);
 void print_vec(Vec3gl vec);
 void print_vec(Vec3_Sphere vec);
 void print_vec(Vec3gl_Sphere vec);
+
+void print_matrix(Matrix3 mat);
+void print_matrix(Matrix4 mat);
 
 Vec3 cross(const Vec3& a, const Vec3& b);
 Vec3gl cross(const Vec3gl& a, const Vec3gl& b);
