@@ -1,4 +1,3 @@
-#pragma once
 #include "include/linalg.hpp"
 
 inline void print_vec(vec2 vec) {
