@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <array>
+#include <string_view>
 #include <glm/glm.hpp>
 #include "glad.h"
 #include <GLFW/glfw3.h>

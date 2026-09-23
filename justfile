@@ -8,7 +8,7 @@ TEST_BUILD_DIR := f'{{BUILD_DIR}}/test'
 LIB_BUILD_DIR := f'{{BUILD_DIR}}/lib'
 EXAMPLES_BUILD_DIR := f'{{BUILD_DIR}}/examples'
 
-CPPFLAGS := '-std=c++14 -Wpedantic -Wall -Wextra -Werror -g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -lGL -lglfw -O2'
+CPPFLAGS := '-std=c++17 -Wpedantic -Wall -Wextra -Werror -g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -lGL -lglfw -O2'
 
 # Makes so that it lists every recipe instead of running the first one
 # When no command is given after "just"
