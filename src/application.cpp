@@ -56,10 +56,10 @@ void Application::init() {
 }
 
 
-GLint Application::get_width() {
+int Application::get_width() {
     return this->width;
 }
-GLint Application::get_height() {
+int Application::get_height() {
     return this->height;
 }
 

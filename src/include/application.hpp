@@ -5,8 +5,8 @@ class Application {
 
 private:
 
-    GLint width;
-    GLint height;
+    int width;
+    int height;
     std::string_view window_name;
 
 
@@ -20,8 +20,8 @@ public:
 
     void init();
 
-    GLint get_width();
-    GLint get_height();
+    int get_width();
+    int get_height();
 
 };
 

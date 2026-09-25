@@ -15,7 +15,7 @@ Color::Color(byte r, byte g, byte b, byte a) {
     this->a = a;
 }
 
-Color::Color(uint32_t hex) {
+Color::Color(unsigned int hex) {
     this->r =  hex >> 24;
     this->g =  hex >> 16 & 0x0000FFFF;
     this->b =  hex >>  8 & 0x000000FF;
