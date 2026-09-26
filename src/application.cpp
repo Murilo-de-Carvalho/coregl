@@ -4,7 +4,7 @@
 //  Application
 // ============================================================
 
-Application::Application(const std::string_view window_name, const int width, const int height) {
+Application::Application(const std::string& window_name, const int width, const int height) {
 
     if (width < 1)
         ERROR("width must be positive")
@@ -15,6 +15,7 @@ Application::Application(const std::string_view window_name, const int width, co
     this->width = width;
     this->height = height;
     this->window_name = window_name;
+    this->window = nullptr;
 
 }
 
@@ -35,7 +36,7 @@ void Application::init() {
 
     // Tell GLFW which profile we're using (core)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    this->window = glfwCreateWindow(this->width, this->height, this->window_name.cbegin(), NULL, NULL);
+    this->window = glfwCreateWindow(this->width, this->height, this->window_name.c_str(), NULL, NULL);
 
     // Check if the GLFW window was created successfully
     if (!(this->window)) 

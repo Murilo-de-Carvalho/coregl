@@ -7,15 +7,15 @@ private:
 
     int width;
     int height;
-    std::string_view window_name;
+    std::string window_name;
 
 
 public:
 
-    // It is used all the time, better to just be public
+    // It is used all the time, might as well be public
     GLFWwindow* window;
 
-    Application(const std::string_view window_name, const int width, const int height);
+    Application(const std::string& window_name, const int width, const int height);
     ~Application();
 
     void init();
