@@ -1,28 +1,6 @@
 #pragma once
 #include "macros.hpp"
 
-class Vertex_Shader {
-
-private:
-
-    unsigned int id;
-
-    std::string read_file(const std::string& path);
-    
-    unsigned int compile(const std::string& src);
-
-public:
-
-    Vertex_Shader(const std::string& file_path);
-    ~Vertex_Shader();
-
-    // Wrapper for glUseProgram()
-    inline void use() {
-        glUseProgram(id);
-    }
-
-};
-
 class Shader {
 
 private:
@@ -35,6 +13,7 @@ private:
 
 public:
 
+    Shader();
     Shader(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
     ~Shader();
 

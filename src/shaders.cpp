@@ -50,6 +50,10 @@ unsigned int Shader::compile(unsigned int type, const std::string& src) {
     return id;
 }
 
+Shader::Shader() {
+    this->id = 0;
+}
+
 Shader::Shader(const std::string& vertex_shader_path, const std::string& fragment_shader_path) {
 
     std::string src_vs = read_file(vertex_shader_path);
