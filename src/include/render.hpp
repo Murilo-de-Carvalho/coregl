@@ -173,7 +173,7 @@ private:
 
 public:
 
-    Untextured_Mesh(Position_Buffer pb, Color_Buffer cb, Index_Buffer ib, Shader shader);
+    Untextured_Mesh(const Position_Buffer& pb, const Color_Buffer& cb, const Index_Buffer& ib, const Shader& shader);
     // TODO: Untextured_Mesh(Position_Buffer pb, Color_Buffer cb, Index_Buffer ib);
     ~Untextured_Mesh();
 
@@ -185,3 +185,19 @@ public:
     }
 
 };
+
+class Monochrome_Mesh : public Mesh_Class {
+
+public:
+
+    Monochrome_Mesh(const Position_Buffer& pb, const Index_Buffer& ib, Color color);
+    ~Monochrome_Mesh();
+
+    void bind();
+    void unbind();
+
+    inline void render() {
+        glDrawElements(GL_TRIANGLES, ib.get_count(), GL_UNSIGNED_INT, nullptr);
+    }
+
+} 

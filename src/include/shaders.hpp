@@ -17,6 +17,8 @@ public:
     Shader(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
     ~Shader();
 
+    void impromptu(const std::string& vert_src, const std::string& frag_src);
+
     inline unsigned int get_id() {
         return id;
     }
