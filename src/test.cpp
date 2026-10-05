@@ -56,7 +56,6 @@ int main() {
     Color_Buffer cb = {colors};
     Index_Buffer ib = {indices};
 
-    use_shader(shader);
     Untextured_Mesh mesh = {pb, cb, ib, shader};
     mesh.bind();
 
@@ -68,7 +67,6 @@ int main() {
         clear_background();
 
         mesh.render();
-        //glDrawElements(GL_TRIANGLES, mesh.get_elem_count(), GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(app.window);
 

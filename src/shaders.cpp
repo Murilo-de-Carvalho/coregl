@@ -77,6 +77,29 @@ Shader::Shader(const std::string& vertex_shader_path, const std::string& fragmen
 
 }
 
+void Shader::impromptu(const std::string& vert_src, const std::string& frag_src) {
+
+    if (this->id != 0)
+        ERROR("Shader already compiled, impromptu only works on empty Shader instances")
+
+    unsigned int program_id = glCreateProgram();
+    unsigned int vs_id = compile(GL_VERTEX_SHADER, vert_src);
+    unsigned int fs_id = compile(GL_FRAGMENT_SHADER, frag_src);
+
+    // Equivalent of linking .o files together after compilation
+    glAttachShader(program_id, vs_id);
+    glAttachShader(program_id, fs_id);
+    glLinkProgram(program_id);
+    glValidateProgram(program_id);
+
+    // Equivalent of deleting .o files after linking final executable
+    glDeleteShader(vs_id);
+    glDeleteShader(fs_id);
+
+    this->id = program_id;
+
+}
+
 Shader::~Shader() {
     glDeleteProgram(id);
 }

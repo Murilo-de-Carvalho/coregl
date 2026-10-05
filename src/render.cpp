@@ -220,7 +220,7 @@ Color_Buffer::~Color_Buffer() {
 //  Untextured_Mesh
 // ============================================================
 
-Untextured_Mesh::Untextured_Mesh(Position_Buffer pb, Color_Buffer cb, Index_Buffer ib, Shader shader) {
+Untextured_Mesh::Untextured_Mesh(const Position_Buffer& pb, const Color_Buffer& cb, const Index_Buffer& ib, const Shader& shader) {
 
     glBindVertexArray(0);
 
@@ -232,17 +232,17 @@ Untextured_Mesh::Untextured_Mesh(Position_Buffer pb, Color_Buffer cb, Index_Buff
     this->ib = ib;
     this->shader = shader;
 
-    
+
     glBindBuffer(GL_ARRAY_BUFFER, pb.get_id());
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*) 0);
-    
+
     glBindBuffer(GL_ARRAY_BUFFER, cb.get_id());
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, 4 * sizeof(byte), (const void*) 0);
-    
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.get_id());
-    
+
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -260,6 +260,57 @@ void Untextured_Mesh::bind() {
 }
 
 void Untextured_Mesh::unbind() {
+    glBindVertexArray(0);
+    //glBindBuffer(GL_ARRAY_BUFFER, 0); // Probably not necessary but jsut to be certain
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Probably not necessary but jsut to be certain
+    clear_shader();
+}
+
+
+
+// ============================================================
+//  Monochrome_Mesh
+// ============================================================
+
+Monochrome_Mesh::Monochrome_Mesh(const Position_Buffer& pb, const Index_Buffer& ib, Color color) {
+
+    glBindVertexArray(0);
+
+    glGenVertexArrays(1, &id);
+    glBindVertexArray(id);
+
+    this->pb = pb;
+    this->ib = ib;
+
+    char[150] vert_src = "#version 330 core\n\nlayout(location = 0) in vec4 pos;\n\nvoid main() {\n\tgl_Position = pos;\n\tvertex_color = color_in;\n}\n";
+    char[150] frag_src;
+    sprintf(frag_src, "#version 330 core\n\nvoid main() {\n\tcolor_out = vec4(%.2f, %.2f, %.2f, %.2f);\n}\n", color.r, color.g, color.b, color.a);
+
+    this->shader.impromptu(vert_src, frag_src);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, pb.get_id());
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*) 0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.get_id());
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+
+Monochrome_Mesh::~Monochrome_Mesh() {
+    glDeleteVertexArrays(1, &id);
+}
+
+
+
+void Monochrome_Mesh::bind() {
+    glBindVertexArray(id);
+    use_shader(shader);
+}
+
+void Monochrome_Mesh::unbind() {
     glBindVertexArray(0);
     //glBindBuffer(GL_ARRAY_BUFFER, 0); // Probably not necessary but jsut to be certain
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Probably not necessary but jsut to be certain
