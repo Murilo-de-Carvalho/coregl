@@ -282,9 +282,9 @@ Monochrome_Mesh::Monochrome_Mesh(const Position_Buffer& pb, const Index_Buffer& 
     this->pb = pb;
     this->ib = ib;
 
-    char[150] vert_src = "#version 330 core\n\nlayout(location = 0) in vec4 pos;\n\nvoid main() {\n\tgl_Position = pos;\n\tvertex_color = color_in;\n}\n";
-    char[150] frag_src;
-    sprintf(frag_src, "#version 330 core\n\nvoid main() {\n\tcolor_out = vec4(%.2f, %.2f, %.2f, %.2f);\n}\n", color.r, color.g, color.b, color.a);
+    char vert_src[150] = "#version 330 core\n\nlayout(location = 0) in vec4 pos;\n\nvoid main() {\n\tgl_Position = pos;\n}\n";
+    char frag_src[150];
+    sprintf(frag_src, "#version 330 core\n\nout vec4 color_out;\n\nvoid main() {\n\tcolor_out = vec4(%.2f, %.2f, %.2f, %.2f);\n}\n", color.r/255.0, color.g/255.0, color.b/255.0, color.a/255.0);
 
     this->shader.impromptu(vert_src, frag_src);
     

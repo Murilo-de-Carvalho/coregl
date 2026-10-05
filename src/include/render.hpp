@@ -200,4 +200,4 @@ public:
         glDrawElements(GL_TRIANGLES, ib.get_count(), GL_UNSIGNED_INT, nullptr);
     }
 
-} 
+};
