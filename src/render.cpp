@@ -245,7 +245,6 @@ Untextured_Mesh::Untextured_Mesh(Position_Buffer pb, Color_Buffer cb, Index_Buff
     
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    use_shader(this->shader);
 
 }
 
@@ -257,7 +256,7 @@ Untextured_Mesh::~Untextured_Mesh() {
 
 void Untextured_Mesh::bind() {
     glBindVertexArray(id);
-    //use_shader(shader);
+    use_shader(shader);
 }
 
 void Untextured_Mesh::unbind() {
