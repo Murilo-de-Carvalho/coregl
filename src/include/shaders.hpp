@@ -19,19 +19,19 @@ public:
 
     void impromptu(const std::string& vert_src, const std::string& frag_src);
 
-    inline unsigned int get_id() {
+    inline unsigned int get_id() const {
         return id;
     }
 
+    // Wrapper for glUseProgram()
+    inline void bind() const {
+        glUseProgram(id);
+    }
+
+    // Also a wrapper for glUseProgram()
+    // Just binds a "nothing" shader
+    inline void unbind() const {
+        glUseProgram(0);
+    }
+
 };
-
-// Wrapper for glUseProgram()
-inline void use_shader(Shader shader) {
-    glUseProgram(shader.get_id());
-}
-
-// Also a wrapper for glUseProgram()
-// Just binds a "nothing" shader
-inline void clear_shader() {
-    glUseProgram(0);
-}

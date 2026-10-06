@@ -1,11 +1,57 @@
 #include "include/render.hpp"
+#define STB_IMAGE_IMPLEMENTATION
+#include "include/stb_image.h"
 
-enum Vertex_Attributes {
-    POSITION = 0,
-    COLOR,
-    NORMAL,
-    UV
-};
+// ============================================================
+//  Index_Buffer
+// ============================================================
+
+Texture::Texture(const std::string& filepath) {
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // OpenGL considers y=0 at the bottom while images understand y=0 at the top
+    // That's why we're flipping vertically
+    stbi_set_flip_vertically_on_load(true);
+    local_buffer = stbi_load(filepath.c_str(), &width, &height, &BPP, 4);
+
+    glGenTextures(1, &id);
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, local_buffer);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    if (local_buffer)
+        stbi_image_free(local_buffer);
+}
+
+Texture::~Texture() {
+    glDeleteTextures(1, &id);
+}
+
+
+
+void Texture::bind(unsigned int slot) const {
+
+    if (slot > 31)
+        ERROR("slot must be between 0 and 31")
+
+    glActiveTexture(GL_TEXTURE0 + slot);
+    glBindTexture(GL_TEXTURE_2D, id);
+
+}
+
+void Texture::unbind() const {
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
 
 // ============================================================
 //  Index_Buffer
@@ -74,6 +120,12 @@ Position_Buffer::~Position_Buffer() {
     glDeleteBuffers(1, &id);
 }
 
+void Position_Buffer::__link_to_mesh() {
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glEnableVertexAttribArray(__Vertex_Attributes::POSITION);
+    glVertexAttribPointer(__Vertex_Attributes::POSITION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*) 0);
+}
+
 
 
 // ============================================================
@@ -110,6 +162,12 @@ Normal_Buffer::Normal_Buffer(const std::vector<vec3> &normals) {
 
 Normal_Buffer::~Normal_Buffer() {
     glDeleteBuffers(1, &id);
+}
+
+void Normal_Buffer::__link_to_mesh() {
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glEnableVertexAttribArray(__Vertex_Attributes::NORMAL);
+    glVertexAttribPointer(__Vertex_Attributes::NORMAL, 3, GL_SHORT, GL_TRUE, 3 * sizeof(short), (const void*) 0);
 }
 
 
@@ -175,6 +233,18 @@ UV_Buffer::~UV_Buffer() {
     glDeleteBuffers(1, &id);
 }
 
+void UV_Buffer::__link_to_mesh() {
+
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glEnableVertexAttribArray(__Vertex_Attributes::UV);
+
+    if (is_vec3)
+        glVertexAttribPointer(__Vertex_Attributes::UV, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*) 0);
+    else
+        glVertexAttribPointer(__Vertex_Attributes::UV, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (const void*) 0);
+
+}
+
 
 
 // ============================================================
@@ -214,6 +284,12 @@ Color_Buffer::~Color_Buffer() {
     glDeleteBuffers(1, &id);
 }
 
+void Color_Buffer::__link_to_mesh() {
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+    glEnableVertexAttribArray(__Vertex_Attributes::COLOR);
+    glVertexAttribPointer(__Vertex_Attributes::COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 3 * sizeof(byte), (const void*) 0);
+}
+
 
 
 // ============================================================
@@ -232,16 +308,9 @@ Untextured_Mesh::Untextured_Mesh(const Position_Buffer& pb, const Color_Buffer& 
     this->ib = ib;
     this->shader = shader;
 
-
-    glBindBuffer(GL_ARRAY_BUFFER, pb.get_id());
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*) 0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, cb.get_id());
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, 4 * sizeof(byte), (const void*) 0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.get_id());
+    this->pb.__link_to_mesh();
+    this->cb.__link_to_mesh();
+    this->ib.__link_to_mesh();
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -250,20 +319,6 @@ Untextured_Mesh::Untextured_Mesh(const Position_Buffer& pb, const Color_Buffer& 
 
 Untextured_Mesh::~Untextured_Mesh() {
     glDeleteVertexArrays(1, &id);
-}
-
-
-
-void Untextured_Mesh::bind() {
-    glBindVertexArray(id);
-    use_shader(shader);
-}
-
-void Untextured_Mesh::unbind() {
-    glBindVertexArray(0);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0); // Probably not necessary but jsut to be certain
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Probably not necessary but jsut to be certain
-    clear_shader();
 }
 
 
@@ -287,12 +342,9 @@ Monochrome_Mesh::Monochrome_Mesh(const Position_Buffer& pb, const Index_Buffer& 
     sprintf(frag_src, "#version 330 core\n\nout vec4 color_out;\n\nvoid main() {\n\tcolor_out = vec4(%.2f, %.2f, %.2f, %.2f);\n}\n", color.r/255.0, color.g/255.0, color.b/255.0, color.a/255.0);
 
     this->shader.impromptu(vert_src, frag_src);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, pb.get_id());
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*) 0);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.get_id());
+    this->pb.__link_to_mesh();
+    this->ib.__link_to_mesh();
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -305,14 +357,31 @@ Monochrome_Mesh::~Monochrome_Mesh() {
 
 
 
-void Monochrome_Mesh::bind() {
+// ============================================================
+//  Mesh
+// ============================================================
+
+Mesh::Mesh(const Position_Buffer& pb, const UV_Buffer& uvb, const Index_Buffer& ib, const Shader& shader) {
+
+    glBindVertexArray(0);
+
+    glGenVertexArrays(1, &id);
     glBindVertexArray(id);
-    use_shader(shader);
+
+    this->pb = pb;
+    this->ib = ib;
+    this->uvb = uvb;
+    this->shader = shader;
+
+    this->pb.__link_to_mesh();
+    this->uvb.__link_to_mesh();
+    this->ib.__link_to_mesh();
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
-void Monochrome_Mesh::unbind() {
-    glBindVertexArray(0);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0); // Probably not necessary but jsut to be certain
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Probably not necessary but jsut to be certain
-    clear_shader();
+Mesh::~Mesh() {
+    glDeleteVertexArrays(1, &id);
 }
